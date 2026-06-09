@@ -54,19 +54,26 @@ class Menu
         }
 
         wp_enqueue_style('bootstrap-css', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css', array(), '4.5.2');
-        wp_enqueue_style('datatables', 'https://cdn.datatables.net/2.0.3/css/dataTables.bulma.min.css', array(), '2.0.3');
+        wp_enqueue_style('datatables', 'https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap4.min.css', array('bootstrap-css'), '2.0.3');
         wp_enqueue_style('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css', array(), '11.0.20');
 
         wp_enqueue_script('bootstrap-js', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js', array('jquery'), '4.5.2', true);
         wp_enqueue_script('datatables', 'https://cdn.datatables.net/2.0.3/js/dataTables.min.js', array('jquery'), '2.0.3', true);
-        wp_enqueue_script('datatables-bulma', 'https://cdn.datatables.net/2.0.3/js/dataTables.bulma.min.js', array('jquery', 'datatables'), '2.0.3', true);
+        wp_enqueue_script('datatables-bootstrap', 'https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap4.min.js', array('jquery', 'datatables', 'bootstrap-js'), '2.0.3', true);
         wp_enqueue_script('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11.0.20', true);
 
         if (strpos($hook_suffix, 'payment-management') !== false) {
+            wp_enqueue_style(
+                'khomanguon-admin-transactions',
+                KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/admin-transactions.css',
+                array('bootstrap-css', 'datatables'),
+                KHOMANGUON_TRANSACTION_MANAGER_VERSION
+            );
+
             wp_enqueue_script(
                 'khomanguon-admin-transactions',
                 KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/js/admin-transactions.js',
-                array('jquery', 'datatables', 'sweetalert2'),
+                array('jquery', 'datatables-bootstrap', 'sweetalert2'),
                 KHOMANGUON_TRANSACTION_MANAGER_VERSION,
                 true
             );

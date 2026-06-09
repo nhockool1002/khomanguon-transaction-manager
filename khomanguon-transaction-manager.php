@@ -2,16 +2,17 @@
 /**
  * Plugin Name: Khomanguon Transaction Manager
  * Description: Quản lý giao dịch, ví @Cash, mở khóa S3 và cấu hình cloud cho KHOMANGUON.ORG.
- * Version: 1.0.0
+ * Version: 1.0.0.a
  * Author: KHOMANGUON.ORG
  * Text Domain: khomanguon-transaction-manager
+ * Update URI: https://github.com/nhockool1002/khomanguon-transaction-manager.
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KHOMANGUON_TRANSACTION_MANAGER_VERSION', '1.0.0');
+define('KHOMANGUON_TRANSACTION_MANAGER_VERSION', '1.0.0.a');
 define('KHOMANGUON_TRANSACTION_MANAGER_FILE', __FILE__);
 define('KHOMANGUON_TRANSACTION_MANAGER_PATH', plugin_dir_path(__FILE__));
 define('KHOMANGUON_TRANSACTION_MANAGER_URL', plugin_dir_url(__FILE__));
@@ -44,6 +45,7 @@ if (file_exists($khomanguon_autoload)) {
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Installer.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/PointsRepository.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Mail/MailjetMailer.php';
+require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/GitHubUpdater.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Plugin.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Admin/Menu.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Admin/TransactionsPage.php';
@@ -51,6 +53,8 @@ require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Admin/SettingsPage.
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Ajax/UpdateOrderStatus.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Ajax/SignedS3Url.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/PostMeta/S3MetaBox.php';
+
+new Khomanguon\TransactionManager\GitHubUpdater(KHOMANGUON_TRANSACTION_MANAGER_FILE, KHOMANGUON_TRANSACTION_MANAGER_VERSION);
 
 register_activation_hook(__FILE__, array('Khomanguon\\TransactionManager\\Installer', 'activate'));
 

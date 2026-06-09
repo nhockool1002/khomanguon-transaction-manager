@@ -1,0 +1,292 @@
+.khomanguon-admin-page {
+    margin: 20px 20px 20px 0;
+    color: #1d2327;
+}
+
+.khomanguon-admin-card {
+    overflow: hidden;
+    margin-bottom: 24px;
+    border: 1px solid #dcdcde;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.khomanguon-admin-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #edf0f2;
+    background: linear-gradient(135deg, #f8fbff 0%, #fff7f7 100%);
+}
+
+.khomanguon-admin-card__header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.khomanguon-admin-card__header p {
+    margin: 6px 0 0;
+    color: #646970;
+    font-size: 13px;
+}
+
+.khomanguon-admin-card__body {
+    padding: 20px 24px 24px;
+}
+
+.khomanguon-admin-count {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #eef6ff;
+    color: #0b5cab;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.khomanguon-table-wrap {
+    overflow-x: auto;
+}
+
+.khomanguon-admin-table {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    color: #1d2327;
+    font-size: 13px;
+}
+
+.khomanguon-admin-table thead th {
+    border-top: 0;
+    border-bottom: 1px solid #dcdcde !important;
+    background: #f6f7f7;
+    color: #3c434a;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.khomanguon-admin-table tbody td {
+    vertical-align: middle;
+    border-top: 1px solid #edf0f2;
+}
+
+.khomanguon-admin-table.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fbfcfd;
+}
+
+.khomanguon-admin-table.table-hover tbody tr:hover {
+    background-color: #f2f7ff;
+}
+
+.khomanguon-admin-table .amount-charge,
+.khomanguon-admin-table .method_payment,
+.khomanguon-admin-table .operator-green,
+.khomanguon-admin-table .operator-red {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.khomanguon-admin-table .amount-charge {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.khomanguon-admin-table .method_payment {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.khomanguon-admin-table .mt_2,
+.khomanguon-admin-table .mt_3,
+.khomanguon-admin-table .mt_4 {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.khomanguon-admin-table .operator-green {
+    background: #dcfce7;
+    color: #047857;
+}
+
+.khomanguon-admin-table .operator-red {
+    background: #fee2e2;
+    color: #be123c;
+}
+
+.khomanguon-admin-table .khomanguon-payment-info {
+    min-width: 420px;
+}
+
+.khomanguon-user-link {
+    color: #0b5cab;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.khomanguon-user-link:hover {
+    color: #063f78;
+    text-decoration: underline;
+}
+
+.khomanguon-admin-table .method {
+    min-width: 150px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: none;
+    color: #fff;
+    font-weight: 700;
+}
+
+.khomanguon-admin-table .khomanguon-update-payment {
+    min-width: 88px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.khomanguon-admin-page div.dt-container .row {
+    align-items: center;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.khomanguon-admin-page div.dt-container div.dt-length,
+.khomanguon-admin-page div.dt-container div.dt-search,
+.khomanguon-admin-page div.dt-container div.dt-info,
+.khomanguon-admin-page div.dt-container div.dt-paging {
+    padding: 0;
+}
+
+.khomanguon-admin-page div.dt-container div.dt-length label,
+.khomanguon-admin-page div.dt-container div.dt-search label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #50575e;
+    font-weight: 600;
+}
+
+.khomanguon-admin-page div.dt-container .dt-input,
+.khomanguon-admin-page div.dt-container select,
+.khomanguon-admin-page div.dt-container input[type="search"] {
+    min-height: 34px;
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: none;
+}
+
+.khomanguon-admin-page div.dt-container div.dt-search {
+    text-align: right;
+}
+
+.khomanguon-admin-page div.dt-container div.dt-info {
+    padding-top: 16px;
+    color: #646970;
+}
+
+.khomanguon-admin-page div.dt-container div.dt-paging {
+    padding-top: 14px;
+    text-align: right;
+}
+
+.khomanguon-admin-page div.dt-container .pagination,
+.khomanguon-admin-page div.dt-container .dt-paging {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin: 0;
+    list-style: none;
+}
+
+.khomanguon-admin-page div.dt-container .pagination .page-item,
+.khomanguon-admin-page div.dt-container .dt-paging-button {
+    display: inline-flex;
+    margin: 0;
+}
+
+.khomanguon-admin-page div.dt-container .page-link,
+.khomanguon-admin-page div.dt-container .dt-paging-button {
+    min-width: 34px;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d0d7de;
+    border-radius: 8px !important;
+    background: #fff;
+    color: #1d4ed8 !important;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.khomanguon-admin-page div.dt-container .page-item.active .page-link,
+.khomanguon-admin-page div.dt-container .dt-paging-button.current {
+    border-color: #2271b1 !important;
+    background: #2271b1 !important;
+    color: #fff !important;
+}
+
+.khomanguon-admin-page div.dt-container .page-item.disabled .page-link,
+.khomanguon-admin-page div.dt-container .dt-paging-button.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.khomanguon-empty-state {
+    padding: 32px;
+    border: 1px dashed #c3c4c7;
+    border-radius: 10px;
+    background: #f6f7f7;
+    color: #646970;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+@media (max-width: 782px) {
+    .khomanguon-admin-page {
+        margin-right: 10px;
+    }
+
+    .khomanguon-admin-card__header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .khomanguon-admin-card__body {
+        padding: 16px;
+    }
+
+    .khomanguon-admin-page div.dt-container div.dt-search,
+    .khomanguon-admin-page div.dt-container div.dt-paging {
+        text-align: left;
+    }
+
+    .khomanguon-admin-page div.dt-container .pagination,
+    .khomanguon-admin-page div.dt-container .dt-paging {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}

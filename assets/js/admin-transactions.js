@@ -1,16 +1,42 @@
 jQuery(document).ready(function($) {
     'use strict';
 
+    var dataTableLanguage = {
+        search: 'Tìm kiếm:',
+        lengthMenu: 'Hiển thị _MENU_ dòng',
+        info: 'Đang hiển thị _START_ đến _END_ trong _TOTAL_ dòng',
+        infoEmpty: 'Không có dữ liệu',
+        infoFiltered: '(lọc từ _MAX_ dòng)',
+        zeroRecords: 'Không tìm thấy dữ liệu phù hợp',
+        emptyTable: 'Không có dữ liệu',
+        paginate: {
+            first: 'Đầu',
+            previous: 'Trước',
+            next: 'Sau',
+            last: 'Cuối'
+        }
+    };
+
     if ($.fn.DataTable && !$.fn.DataTable.isDataTable('#table_history_payment')) {
         $('#table_history_payment').DataTable({
             pageLength: 10,
-            order: [[3, 'desc']]
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Tất cả']],
+            autoWidth: false,
+            order: [[3, 'desc']],
+            language: dataTableLanguage,
+            columnDefs: [
+                { orderable: false, targets: [4, 5] }
+            ]
         });
     }
 
     if ($.fn.DataTable && !$.fn.DataTable.isDataTable('#table_history_payment_2')) {
         $('#table_history_payment_2').DataTable({
-            pageLength: 10
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Tất cả']],
+            autoWidth: false,
+            order: [[4, 'desc']],
+            language: dataTableLanguage
         });
     }
 
@@ -27,11 +53,11 @@ jQuery(document).ready(function($) {
         $select.css('font-weight', 'bold');
 
         if (selectedValue === -1) {
-            $select.css({ backgroundColor: 'red', color: 'white' });
+            $select.css({ backgroundColor: '#dc2626', color: 'white' });
         } else if (selectedValue === 0) {
-            $select.css({ backgroundColor: 'yellow', color: 'black' });
+            $select.css({ backgroundColor: '#facc15', color: '#422006' });
         } else if (selectedValue === 1) {
-            $select.css({ backgroundColor: 'green', color: 'white' });
+            $select.css({ backgroundColor: '#16a34a', color: 'white' });
         }
     }
 

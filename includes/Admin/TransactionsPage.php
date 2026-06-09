@@ -25,6 +25,8 @@ class TransactionsPage
 
         $results = $this->plugin->repository()->get_admin_orders();
         $rs_history = $this->plugin->repository()->get_admin_history();
+        $results = is_array($results) ? $results : array();
+        $rs_history = is_array($rs_history) ? $rs_history : array();
         $template = KHOMANGUON_TRANSACTION_MANAGER_PATH . 'templates/admin/transactions.php';
 
         if (file_exists($template)) {
