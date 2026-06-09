@@ -1,0 +1,129 @@
+.khomanguon-r2-page .khomanguon-r2-summary,
+.khomanguon-r2-page .khomanguon-r2-cors {
+    display: grid;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid #dcdcde;
+    border-radius: 10px;
+    background: #f6f7f7;
+}
+
+.khomanguon-r2-page .khomanguon-r2-cors {
+    margin-top: 14px;
+    background: #fff8e5;
+}
+
+.khomanguon-r2-page .khomanguon-r2-cors p {
+    margin: 0;
+}
+
+.khomanguon-r2-upload-grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(180px, 260px);
+    gap: 16px;
+}
+
+.khomanguon-r2-key-field {
+    grid-column: 1 / -1;
+}
+
+.khomanguon-r2-key-field small {
+    display: block;
+    margin-top: 6px;
+    color: #646970;
+}
+
+.khomanguon-r2-actions,
+.khomanguon-r2-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.khomanguon-r2-filter {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.khomanguon-r2-filter input {
+    max-width: 420px;
+}
+
+.khomanguon-r2-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    color: #50575e;
+    font-weight: 700;
+}
+
+#khomanguon-r2-upload-status {
+    color: #2271b1;
+    font-weight: 700;
+}
+
+#khomanguon-r2-upload-status.is-error {
+    color: #b32d2e;
+}
+
+.khomanguon-r2-progress {
+    overflow: hidden;
+    height: 24px;
+    margin-top: 16px;
+    border-radius: 999px;
+    background: #edf0f2;
+}
+
+.khomanguon-r2-progress[aria-hidden="true"] {
+    display: none;
+}
+
+#khomanguon-r2-progress-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2271b1, #16a34a);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: center;
+    transition: width 0.2s ease;
+}
+
+.khomanguon-r2-key-cell {
+    word-break: break-all;
+}
+
+.khomanguon-r2-path-cell {
+    min-width: 260px;
+    word-break: break-all;
+}
+
+.khomanguon-r2-table .button {
+    margin-bottom: 4px;
+}
+
+.khomanguon-r2-disabled-card {
+    opacity: 0.65;
+}
+
+.khomanguon-r2-disabled-card input,
+.khomanguon-r2-disabled-card button {
+    cursor: not-allowed;
+}
+
+@media (max-width: 782px) {
+    .khomanguon-r2-upload-grid,
+    .khomanguon-r2-actions,
+    .khomanguon-r2-filter {
+        display: block;
+    }
+
+    .khomanguon-r2-actions .button,
+    .khomanguon-r2-filter .button {
+        margin-top: 10px;
+    }
+}

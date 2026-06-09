@@ -13,12 +13,14 @@ class Menu
     private $plugin;
     private $transactions_page;
     private $settings_page;
+    private $r2_upload_page;
 
     public function __construct(Plugin $plugin)
     {
         $this->plugin = $plugin;
         $this->transactions_page = new TransactionsPage($plugin);
         $this->settings_page = new SettingsPage();
+        $this->r2_upload_page = new R2UploadPage();
 
         add_action('admin_menu', array($this, 'register'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
@@ -45,11 +47,20 @@ class Menu
             'cloud-key-management',
             array($this->settings_page, 'render')
         );
+
+        add_submenu_page(
+            'payment-management',
+            __('R2 Upload', 'khomanguon-transaction-manager'),
+            __('R2 Upload', 'khomanguon-transaction-manager'),
+            'manage_options',
+            'r2-upload-management',
+            array($this->r2_upload_page, 'render')
+        );
     }
 
     public function enqueue_assets($hook_suffix)
     {
-        if (strpos($hook_suffix, 'payment-management') === false && strpos($hook_suffix, 'cloud-key-management') === false) {
+        if (strpos($hook_suffix, 'payment-management') === false && strpos($hook_suffix, 'cloud-key-management') === false && strpos($hook_suffix, 'r2-upload-management') === false) {
             return;
         }
 
@@ -84,6 +95,41 @@ class Menu
                 array(
                     'ajaxUrl' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('khomanguon_update_order_status'),
+                )
+            );
+        }
+
+        if (strpos($hook_suffix, 'r2-upload-management') !== false) {
+            wp_enqueue_style(
+                'khomanguon-admin-transactions',
+                KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/admin-transactions.css',
+                array('bootstrap-css'),
+                KHOMANGUON_TRANSACTION_MANAGER_VERSION
+            );
+
+            wp_enqueue_style(
+                'khomanguon-admin-r2-upload',
+                KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/admin-r2-upload.css',
+                array('bootstrap-css', 'khomanguon-admin-transactions'),
+                KHOMANGUON_TRANSACTION_MANAGER_VERSION
+            );
+
+            wp_enqueue_script(
+                'khomanguon-admin-r2-upload',
+                KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/js/admin-r2-upload.js',
+                array('jquery', 'sweetalert2'),
+                KHOMANGUON_TRANSACTION_MANAGER_VERSION,
+                true
+            );
+
+            wp_localize_script(
+                'khomanguon-admin-r2-upload',
+                'khomanguonR2Upload',
+                array(
+                    'ajaxUrl' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('khomanguon_r2_upload'),
+                    'partSize' => 25 * 1024 * 1024,
+                    'bucket' => get_option('r2_bucket'),
                 )
             );
         }

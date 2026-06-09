@@ -3,6 +3,7 @@
 namespace Khomanguon\TransactionManager;
 
 use Khomanguon\TransactionManager\Admin\Menu;
+use Khomanguon\TransactionManager\Ajax\R2Upload;
 use Khomanguon\TransactionManager\Ajax\SignedS3Url;
 use Khomanguon\TransactionManager\Ajax\UpdateOrderStatus;
 use Khomanguon\TransactionManager\Mail\MailjetMailer;
@@ -39,6 +40,7 @@ class Plugin
         new Menu($this);
         new UpdateOrderStatus($this);
         new SignedS3Url($this);
+        new R2Upload();
         new S3MetaBox();
     }
 

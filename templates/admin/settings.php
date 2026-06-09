@@ -51,6 +51,41 @@ if (!defined('ABSPATH')) {
                     </div>
 
                     <hr />
+                    <h3>Cloudflare R2 Settings</h3>
+                    <p class="description"><?php echo esc_html__('R2 tương thích S3. Khi cấu hình R2 đầy đủ, plugin sẽ ưu tiên tạo link tải từ R2 và bật trang upload/quản lý tệp R2.', 'khomanguon-transaction-manager'); ?></p>
+                    <div class="form-group row">
+                        <label for="r2_account_id" class="col-sm-2 col-form-label">Account ID</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="r2_account_id" name="r2_account_id" value="<?php echo esc_attr(get_option('r2_account_id')); ?>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="r2_api_token" class="col-sm-2 col-form-label">Your API Token</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="r2_api_token" name="r2_api_token" value="<?php echo esc_attr(get_option('r2_api_token')); ?>" autocomplete="off">
+                            <small class="form-text text-muted"><?php echo esc_html__('Token Cloudflare API được lưu để dùng cho các thao tác Cloudflare mở rộng. Upload/list/delete hiện dùng Access Key ID và Secret Access Key của R2.', 'khomanguon-transaction-manager'); ?></small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="r2_access_key_id" class="col-sm-2 col-form-label">Access Key ID</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="r2_access_key_id" name="r2_access_key_id" value="<?php echo esc_attr(get_option('r2_access_key_id')); ?>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="r2_secret_access_key" class="col-sm-2 col-form-label">Secret Access Key</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="r2_secret_access_key" name="r2_secret_access_key" value="<?php echo esc_attr(get_option('r2_secret_access_key')); ?>" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="r2_bucket" class="col-sm-2 col-form-label">Bucket Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="r2_bucket" name="r2_bucket" value="<?php echo esc_attr(get_option('r2_bucket')); ?>">
+                        </div>
+                    </div>
+
+                    <hr />
                     <h3>Google Settings</h3>
                     <div class="form-group row">
                         <label for="recaptcha_site_key" class="col-sm-2 col-form-label">Google reCaptcha v3 Site Key</label>

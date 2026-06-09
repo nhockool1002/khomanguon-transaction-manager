@@ -4,6 +4,7 @@ namespace Khomanguon\TransactionManager\Ajax;
 
 use Aws\S3\S3Client;
 use Khomanguon\TransactionManager\Plugin;
+use Khomanguon\TransactionManager\R2ClientFactory;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -55,6 +56,8 @@ class SignedS3Url
 
         $key = get_post_meta($post_id, 'custom_key', true);
         $cash = get_post_meta($post_id, 'custom_cash', true);
+        $provider = get_post_meta($post_id, 'download_provider', true);
+        $provider = in_array($provider, array('s3', 'r2'), true) ? $provider : 's3';
 
         if ($key === '' || !is_numeric($cash)) {
             wp_send_json(
@@ -89,37 +92,53 @@ class SignedS3Url
             );
         }
 
-        $aws_access_key_id = get_option('aws_access_key_id');
-        $aws_secret_access_key = get_option('aws_secret_access_key');
-        $aws_default_region = get_option('aws_default_region');
-        $aws_bucket = get_option('aws_bucket');
-
-        if (empty($aws_access_key_id) || empty($aws_secret_access_key) || empty($aws_default_region) || empty($aws_bucket)) {
-            wp_send_json(
-                array(
-                    'message' => __('Thiếu cấu hình AWS S3.', 'khomanguon-transaction-manager'),
-                    'status' => 500,
-                ),
-                500
-            );
-        }
-
         try {
-            $s3_client = new S3Client(
-                array(
-                    'version' => 'latest',
-                    'region' => $aws_default_region,
-                    'credentials' => array(
-                        'key' => $aws_access_key_id,
-                        'secret' => $aws_secret_access_key,
-                    ),
-                )
-            );
+            if ($provider === 'r2') {
+                $s3_client = R2ClientFactory::client();
+                if (is_wp_error($s3_client)) {
+                    wp_send_json(
+                        array(
+                            'message' => $s3_client->get_error_message(),
+                            'status' => 500,
+                        ),
+                        500
+                    );
+                }
+
+                $bucket = R2ClientFactory::get_bucket();
+            } else {
+                $aws_access_key_id = get_option('aws_access_key_id');
+                $aws_secret_access_key = get_option('aws_secret_access_key');
+                $aws_default_region = get_option('aws_default_region');
+                $aws_bucket = get_option('aws_bucket');
+
+                if (empty($aws_access_key_id) || empty($aws_secret_access_key) || empty($aws_default_region) || empty($aws_bucket)) {
+                    wp_send_json(
+                        array(
+                            'message' => __('Thiếu cấu hình AWS S3.', 'khomanguon-transaction-manager'),
+                            'status' => 500,
+                        ),
+                        500
+                    );
+                }
+
+                $s3_client = new S3Client(
+                    array(
+                        'version' => 'latest',
+                        'region' => $aws_default_region,
+                        'credentials' => array(
+                            'key' => $aws_access_key_id,
+                            'secret' => $aws_secret_access_key,
+                        ),
+                    )
+                );
+                $bucket = $aws_bucket;
+            }
 
             $command = $s3_client->getCommand(
                 'GetObject',
                 array(
-                    'Bucket' => $aws_bucket,
+                    'Bucket' => $bucket,
                     'Key' => $key,
                 )
             );
@@ -130,7 +149,7 @@ class SignedS3Url
             error_log($e->getMessage());
             wp_send_json(
                 array(
-                    'message' => __('Không thể tạo liên kết tải S3.', 'khomanguon-transaction-manager'),
+                    'message' => __('Không thể tạo liên kết tải từ cloud đã chọn.', 'khomanguon-transaction-manager'),
                     'status' => 500,
                 ),
                 500
@@ -142,7 +161,7 @@ class SignedS3Url
             $user_id,
             $cash,
             '-',
-            'Tạo liên kết tải cho bài viết: ' . $post_title,
+            'Tạo liên kết tải ' . strtoupper($provider) . ' cho bài viết: ' . $post_title,
             true
         );
 
