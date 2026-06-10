@@ -106,7 +106,7 @@ class GitHubUpdater
             'version' => $this->normalize_version($release['tag_name']),
             'author' => '<a href="https://khomanguon.org">KHOMANGUON.ORG</a>',
             'homepage' => $this->github_repo_url(),
-            'download_link' => $release['zipball_url'],
+            'download_link' => $this->github_release_zip_url($release['tag_name']),
             'last_updated' => isset($release['published_at']) ? $release['published_at'] : '',
             'requires' => '',
             'tested' => get_bloginfo('version'),
@@ -212,7 +212,7 @@ class GitHubUpdater
             'version' => $new_version,
             'new_version' => $new_version,
             'url' => !empty($release['html_url']) ? $release['html_url'] : $this->github_repo_url(),
-            'package' => $release['zipball_url'],
+            'package' => $this->github_release_zip_url($release['tag_name']),
             'tested' => get_bloginfo('version'),
             'requires_php' => '',
         );
@@ -238,6 +238,15 @@ class GitHubUpdater
             'https://github.com/%s/%s',
             rawurlencode(self::GITHUB_OWNER),
             rawurlencode(self::GITHUB_REPO)
+        );
+    }
+
+    private function github_release_zip_url($tag_name)
+    {
+        return sprintf(
+            '%s/archive/refs/tags/%s.zip',
+            $this->github_repo_url(),
+            rawurlencode($tag_name)
         );
     }
 }
