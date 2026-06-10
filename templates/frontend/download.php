@@ -6,10 +6,11 @@ if (!defined('ABSPATH')) {
 
 $key = trim((string) get_post_meta($post_id, 'custom_key', true));
 $cash = get_post_meta($post_id, 'custom_cash', true);
+$cash_amount = is_numeric($cash) ? (float) $cash : 0;
 $has_download_key = $key !== '';
-$has_price = $cash !== '' && is_numeric($cash);
+$has_price = $cash_amount > 0;
 $is_download_ready = $has_download_key && $has_price;
-$display_cash = $has_price ? number_format_i18n((float) $cash) . ' ' . COIN_PREFIX : '';
+$display_cash = $has_price ? number_format_i18n($cash_amount) . ' ' . COIN_PREFIX : '';
 $file_details = $has_download_key
     ? khomanguon_transactions()->download_file_details($post_id)
     : array(
@@ -39,10 +40,12 @@ if (!$has_download_key && !$has_price) {
                         <span>➡ <?php echo esc_html__('Liên kết tải đơn luồng, tốc độ tải không giới hạn.', 'khomanguon-transaction-manager'); ?></span>
                     </div>
                 </div>
-                <div class="khomanguon-price-card <?php echo $has_price ? '' : 'is-pending'; ?>">
-                    <span><?php echo esc_html__('Chi phí mở khóa', 'khomanguon-transaction-manager'); ?></span>
-                    <strong><?php echo $has_price ? esc_html($display_cash) : esc_html__('Đang cập nhật', 'khomanguon-transaction-manager'); ?></strong>
-                </div>
+                <?php if ($has_price) : ?>
+                    <div class="khomanguon-price-card">
+                        <span><?php echo esc_html__('Chi phí mở khóa', 'khomanguon-transaction-manager'); ?></span>
+                        <strong><?php echo esc_html($display_cash); ?></strong>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="col-sm-12 pl-0">

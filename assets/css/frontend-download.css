@@ -1,5 +1,6 @@
 .khomanguon-download-box {
     position: relative;
+    isolation: isolate;
     overflow: hidden;
     margin: 22px 0;
     padding: 24px;
@@ -14,15 +15,24 @@
 
 .khomanguon-download-box::before {
     position: absolute;
-    inset: -80%;
+    z-index: 0;
+    top: 50%;
+    left: 50%;
+    width: 220%;
+    aspect-ratio: 1;
     background: conic-gradient(from 0deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
     content: "";
-    animation: khomanguon-rainbow-border-spin 4s linear infinite;
+    animation: khomanguon-rainbow-border-spin 5s linear infinite;
+    backface-visibility: hidden;
     pointer-events: none;
+    transform: translate3d(-50%, -50%, 0) rotate(0turn);
+    transform-origin: 50% 50%;
+    will-change: transform;
 }
 
 .khomanguon-download-box::after {
     position: absolute;
+    z-index: 0;
     inset: 3px;
     border-radius: 17px;
     background:
@@ -249,11 +259,11 @@
 
 @keyframes khomanguon-rainbow-border-spin {
     0% {
-        transform: rotate(0deg);
+        transform: translate3d(-50%, -50%, 0) rotate(0turn);
     }
 
     100% {
-        transform: rotate(360deg);
+        transform: translate3d(-50%, -50%, 0) rotate(1turn);
     }
 }
 
