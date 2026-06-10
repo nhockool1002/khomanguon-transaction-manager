@@ -188,15 +188,36 @@ body.single-post .entry-header h1,
 body.single-post .post-title h1,
 body.single-post article h1:first-of-type {
     position: relative;
+    isolation: isolate;
     display: inline-block;
     margin-right: auto;
     margin-left: auto;
-    padding-bottom: 10px;
+    padding: 10px 18px 14px;
+    border-radius: 18px;
     color: #111827;
     font-weight: 950;
     line-height: 1.18;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
     transition: filter 180ms ease, transform 180ms ease;
+}
+
+body.single-post h1.entry-title::before,
+body.single-post .entry-header h1::before,
+body.single-post .post-title h1::before,
+body.single-post article h1:first-of-type::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at top left, rgba(250, 204, 21, 0.14), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.14), transparent 36%),
+        rgba(255, 255, 255, 0.84);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+    content: "";
+    opacity: 0.92;
+    transition: border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
 }
 
 body.single-post h1.entry-title::after,
@@ -224,12 +245,21 @@ body.single-post article h1:first-of-type:hover {
     background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
     background-size: 300% 100%;
     color: transparent !important;
-    animation: khomanguon-widget-rainbow-text 2s linear infinite;
+    animation: khomanguon-widget-rainbow-text 2.4s linear infinite !important;
     filter: saturate(1.12);
     transform: translateY(-1px);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+body.single-post h1.entry-title:hover::before,
+body.single-post .entry-header h1:hover::before,
+body.single-post .post-title h1:hover::before,
+body.single-post article h1:first-of-type:hover::before {
+    border-color: rgba(34, 211, 238, 0.28);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.1), 0 0 22px rgba(217, 70, 239, 0.1);
+    opacity: 1;
 }
 
 body.single-post h1.entry-title:hover::after,
@@ -247,8 +277,12 @@ body.single-post article h1:first-of-type:hover::after {
         background-position: 0% 50%;
     }
 
-    100% {
+    50% {
         background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
     }
 }
 
@@ -362,9 +396,11 @@ body.single-post article h1:first-of-type:hover::after {
 .wp-block-latest-comments li:focus-within a {
     background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c) !important;
     background-size: 300% 100% !important;
+    background-position: 0% 50%;
     color: transparent !important;
     text-decoration: none !important;
-    animation: khomanguon-widget-rainbow-text 2s linear infinite;
+    animation: khomanguon-widget-rainbow-text 2.4s linear infinite !important;
+    will-change: background-position;
     -webkit-background-clip: text !important;
     background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
