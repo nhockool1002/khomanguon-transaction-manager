@@ -157,11 +157,12 @@
 .wp-block-latest-comments a:focus {
     background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
     background-size: 300% 100%;
-    color: transparent;
-    text-decoration: none;
+    color: transparent !important;
+    text-decoration: none !important;
     animation: khomanguon-widget-rainbow-text 2s linear infinite;
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .widget_recent_entries li:hover a,
@@ -174,11 +175,71 @@
 .wp-block-latest-comments li:focus-within a {
     background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
     background-size: 300% 100%;
-    color: transparent;
-    text-decoration: none;
+    color: transparent !important;
+    text-decoration: none !important;
     animation: khomanguon-widget-rainbow-text 2s linear infinite;
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.single-post h1.entry-title,
+body.single-post .entry-header h1,
+body.single-post .post-title h1,
+body.single-post article h1:first-of-type {
+    position: relative;
+    display: inline-block;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 10px;
+    color: #111827;
+    font-weight: 950;
+    line-height: 1.18;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+    transition: filter 180ms ease, transform 180ms ease;
+}
+
+body.single-post h1.entry-title::after,
+body.single-post .entry-header h1::after,
+body.single-post .post-title h1::after,
+body.single-post article h1:first-of-type::after {
+    position: absolute;
+    right: 10%;
+    bottom: 0;
+    left: 10%;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef);
+    background-size: 300% 100%;
+    box-shadow: 0 6px 18px rgba(217, 70, 239, 0.18);
+    content: "";
+    opacity: 0.88;
+    transition: right 180ms ease, left 180ms ease, opacity 180ms ease;
+}
+
+body.single-post h1.entry-title:hover,
+body.single-post .entry-header h1:hover,
+body.single-post .post-title h1:hover,
+body.single-post article h1:first-of-type:hover {
+    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
+    background-size: 300% 100%;
+    color: transparent !important;
+    animation: khomanguon-widget-rainbow-text 2s linear infinite;
+    filter: saturate(1.12);
+    transform: translateY(-1px);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.single-post h1.entry-title:hover::after,
+body.single-post .entry-header h1:hover::after,
+body.single-post .post-title h1:hover::after,
+body.single-post article h1:first-of-type:hover::after {
+    right: 0;
+    left: 0;
+    animation: khomanguon-widget-rainbow-text 2s linear infinite;
+    opacity: 1;
 }
 
 @keyframes khomanguon-widget-rainbow-text {
@@ -232,6 +293,17 @@
     .wp-block-latest-comments li::before {
         animation: none;
     }
+
+    body.single-post h1.entry-title:hover,
+    body.single-post .entry-header h1:hover,
+    body.single-post .post-title h1:hover,
+    body.single-post article h1:first-of-type:hover,
+    body.single-post h1.entry-title:hover::after,
+    body.single-post .entry-header h1:hover::after,
+    body.single-post .post-title h1:hover::after,
+    body.single-post article h1:first-of-type:hover::after {
+        animation: none;
+    }
 }
 .widget_recent_comments .comment-author-link,
 .wp-block-latest-comments__comment-author {
@@ -269,5 +341,52 @@
     .widget_recent_comments h2,
     .widget_recent_comments h3 {
         font-size: 17px;
+    }
+}
+
+.widget_recent_entries li a:hover,
+.widget_recent_entries li a:focus,
+.widget_recent_entries li:hover a,
+.widget_recent_entries li:focus-within a,
+.widget_recent_comments li a:hover,
+.widget_recent_comments li a:focus,
+.widget_recent_comments li:hover a,
+.widget_recent_comments li:focus-within a,
+.wp-block-latest-posts li a:hover,
+.wp-block-latest-posts li a:focus,
+.wp-block-latest-posts li:hover a,
+.wp-block-latest-posts li:focus-within a,
+.wp-block-latest-comments li a:hover,
+.wp-block-latest-comments li a:focus,
+.wp-block-latest-comments li:hover a,
+.wp-block-latest-comments li:focus-within a {
+    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c) !important;
+    background-size: 300% 100% !important;
+    color: transparent !important;
+    text-decoration: none !important;
+    animation: khomanguon-widget-rainbow-text 2s linear infinite;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .widget_recent_entries li a:hover,
+    .widget_recent_entries li a:focus,
+    .widget_recent_entries li:hover a,
+    .widget_recent_entries li:focus-within a,
+    .widget_recent_comments li a:hover,
+    .widget_recent_comments li a:focus,
+    .widget_recent_comments li:hover a,
+    .widget_recent_comments li:focus-within a,
+    .wp-block-latest-posts li a:hover,
+    .wp-block-latest-posts li a:focus,
+    .wp-block-latest-posts li:hover a,
+    .wp-block-latest-posts li:focus-within a,
+    .wp-block-latest-comments li a:hover,
+    .wp-block-latest-comments li a:focus,
+    .wp-block-latest-comments li:hover a,
+    .wp-block-latest-comments li:focus-within a {
+        animation: none;
     }
 }
