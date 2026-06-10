@@ -33,6 +33,7 @@ class S3ClientFactory
             array(
                 'version' => 'latest',
                 'region' => trim((string) get_option('aws_default_region')),
+                'defaults_mode' => 'legacy',
                 'credentials' => array(
                     'key' => trim((string) get_option('aws_access_key_id')),
                     'secret' => trim((string) get_option('aws_secret_access_key')),

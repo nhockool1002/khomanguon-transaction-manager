@@ -201,6 +201,16 @@ class Plugin
             return (int) $cached_size;
         }
 
+        set_error_handler(
+            function ($severity, $message) {
+                if (strpos($message, 'open_basedir restriction in effect') !== false) {
+                    return true;
+                }
+
+                return false;
+            }
+        );
+
         try {
             if ($provider === 'r2') {
                 $s3_client = R2ClientFactory::client();
@@ -229,6 +239,8 @@ class Plugin
         } catch (\Exception $e) {
             set_site_transient($cache_key, 0, 30 * MINUTE_IN_SECONDS);
             return 0;
+        } finally {
+            restore_error_handler();
         }
     }
 

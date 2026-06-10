@@ -37,6 +37,7 @@ class R2ClientFactory
                 'endpoint' => self::get_endpoint(),
                 'use_path_style_endpoint' => true,
                 'signature_version' => 'v4',
+                'defaults_mode' => 'legacy',
                 'credentials' => array(
                     'key' => trim((string) get_option('r2_access_key_id')),
                     'secret' => trim((string) get_option('r2_secret_access_key')),
