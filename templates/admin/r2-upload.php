@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 ?>
 <?php $default_provider = $providers['s3']['configured'] ? 's3' : 'r2'; ?>
+<?php $default_tab_provider = $providers['r2']['configured'] ? 'r2' : ($providers['s3']['configured'] ? 's3' : 'r2'); ?>
 <div class="wrap khomanguon-admin-page khomanguon-r2-page">
     <div class="khomanguon-admin-card">
         <div class="khomanguon-admin-card__header">
@@ -53,6 +54,79 @@ if (!defined('ABSPATH')) {
     <div class="khomanguon-admin-card <?php echo $has_configured_provider ? '' : 'khomanguon-r2-disabled-card'; ?>">
         <div class="khomanguon-admin-card__header">
             <div>
+                <h1><?php echo esc_html__('Quản lý tệp & Analytics', 'khomanguon-transaction-manager'); ?></h1>
+                <p><?php echo esc_html__('Danh sách object theo prefix, số lượt tải, member đã tải và doanh thu @Cash được ghi nhận theo giá tại từng thời điểm tải.', 'khomanguon-transaction-manager'); ?></p>
+            </div>
+        </div>
+        <div class="khomanguon-admin-card__body">
+            <div class="khomanguon-cloud-tabs" role="tablist" aria-label="<?php echo esc_attr__('Chọn cloud provider', 'khomanguon-transaction-manager'); ?>">
+                <button
+                    type="button"
+                    class="button khomanguon-cloud-tab <?php echo $default_tab_provider === 'r2' ? 'is-active' : ''; ?>"
+                    data-provider="r2"
+                    role="tab"
+                    aria-selected="<?php echo $default_tab_provider === 'r2' ? 'true' : 'false'; ?>"
+                    <?php disabled(!$providers['r2']['configured']); ?>
+                >
+                    <?php echo esc_html__('R2 Cloud', 'khomanguon-transaction-manager'); ?>
+                </button>
+                <button
+                    type="button"
+                    class="button khomanguon-cloud-tab <?php echo $default_tab_provider === 's3' ? 'is-active' : ''; ?>"
+                    data-provider="s3"
+                    role="tab"
+                    aria-selected="<?php echo $default_tab_provider === 's3' ? 'true' : 'false'; ?>"
+                    <?php disabled(!$providers['s3']['configured']); ?>
+                >
+                    <?php echo esc_html__('S3 Cloud', 'khomanguon-transaction-manager'); ?>
+                </button>
+            </div>
+
+            <div class="khomanguon-r2-analytics-summary">
+                <div><strong id="khomanguon-r2-total-files">0</strong><span><?php echo esc_html__('Tệp có lượt tải', 'khomanguon-transaction-manager'); ?></span></div>
+                <div><strong id="khomanguon-r2-total-downloads">0</strong><span><?php echo esc_html__('Tổng lượt tải', 'khomanguon-transaction-manager'); ?></span></div>
+                <div><strong id="khomanguon-r2-total-revenue">0 @Cash</strong><span><?php echo esc_html__('Tổng doanh thu', 'khomanguon-transaction-manager'); ?></span></div>
+            </div>
+
+            <div class="khomanguon-r2-filter">
+                <input type="text" id="khomanguon-r2-list-prefix" class="form-control" placeholder="<?php echo esc_attr__('Lọc theo thư mục con trong upload prefix', 'khomanguon-transaction-manager'); ?>" <?php disabled(!$has_configured_provider); ?>>
+                <button type="button" class="button button-secondary" id="khomanguon-r2-refresh" <?php disabled(!$has_configured_provider); ?>>
+                    <?php echo esc_html__('Tải danh sách', 'khomanguon-transaction-manager'); ?>
+                </button>
+                <label class="khomanguon-r2-toggle">
+                    <input type="checkbox" id="khomanguon-r2-show-file-path" checked <?php disabled(!$has_configured_provider); ?>>
+                    <?php echo esc_html__('Hiển thị file path', 'khomanguon-transaction-manager'); ?>
+                </label>
+            </div>
+
+            <div class="khomanguon-table-wrap">
+                <table class="table table-striped table-hover khomanguon-admin-table khomanguon-r2-table">
+                    <thead>
+                        <tr>
+                            <th><?php echo esc_html__('Tên file', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Object key', 'khomanguon-transaction-manager'); ?></th>
+                            <th class="khomanguon-r2-path-column"><?php echo esc_html__('File path', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Dung lượng', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Cập nhật', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Lượt tải', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Member tải', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Doanh thu', 'khomanguon-transaction-manager'); ?></th>
+                            <th><?php echo esc_html__('Thao tác', 'khomanguon-transaction-manager'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="khomanguon-r2-files-body">
+                        <tr>
+                            <td colspan="9"><?php echo esc_html($has_configured_provider ? __('Đang tải danh sách tệp...', 'khomanguon-transaction-manager') : __('Màn hình quản lý file đang bị vô hiệu hoá vì thiếu cấu hình S3/R2.', 'khomanguon-transaction-manager')); ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="khomanguon-admin-card <?php echo $has_configured_provider ? '' : 'khomanguon-r2-disabled-card'; ?>">
+        <div class="khomanguon-admin-card__header">
+            <div>
                 <h1><?php echo esc_html__('Upload file lớn', 'khomanguon-transaction-manager'); ?></h1>
                 <p><?php echo esc_html__('File được chia part và upload trực tiếp lên provider đã chọn bằng presigned URL, không đi qua PHP upload limit.', 'khomanguon-transaction-manager'); ?></p>
             </div>
@@ -93,56 +167,6 @@ if (!defined('ABSPATH')) {
 
             <div class="khomanguon-r2-progress" aria-hidden="true">
                 <div id="khomanguon-r2-progress-bar"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="khomanguon-admin-card <?php echo $has_configured_provider ? '' : 'khomanguon-r2-disabled-card'; ?>">
-        <div class="khomanguon-admin-card__header">
-            <div>
-                <h1><?php echo esc_html__('Quản lý tệp & Analytics', 'khomanguon-transaction-manager'); ?></h1>
-                <p><?php echo esc_html__('Danh sách object theo prefix, số lượt tải, member đã tải và doanh thu @Cash được ghi nhận theo giá tại từng thời điểm tải.', 'khomanguon-transaction-manager'); ?></p>
-            </div>
-        </div>
-        <div class="khomanguon-admin-card__body">
-            <div class="khomanguon-r2-analytics-summary">
-                <div><strong id="khomanguon-r2-total-files">0</strong><span><?php echo esc_html__('Tệp có lượt tải', 'khomanguon-transaction-manager'); ?></span></div>
-                <div><strong id="khomanguon-r2-total-downloads">0</strong><span><?php echo esc_html__('Tổng lượt tải', 'khomanguon-transaction-manager'); ?></span></div>
-                <div><strong id="khomanguon-r2-total-revenue">0 @Cash</strong><span><?php echo esc_html__('Tổng doanh thu', 'khomanguon-transaction-manager'); ?></span></div>
-            </div>
-
-            <div class="khomanguon-r2-filter">
-                <input type="text" id="khomanguon-r2-list-prefix" class="form-control" placeholder="<?php echo esc_attr__('Lọc theo thư mục con trong upload prefix', 'khomanguon-transaction-manager'); ?>" <?php disabled(!$has_configured_provider); ?>>
-                <button type="button" class="button button-secondary" id="khomanguon-r2-refresh" <?php disabled(!$has_configured_provider); ?>>
-                    <?php echo esc_html__('Tải danh sách', 'khomanguon-transaction-manager'); ?>
-                </button>
-                <label class="khomanguon-r2-toggle">
-                    <input type="checkbox" id="khomanguon-r2-show-file-path" checked <?php disabled(!$has_configured_provider); ?>>
-                    <?php echo esc_html__('Hiển thị file path', 'khomanguon-transaction-manager'); ?>
-                </label>
-            </div>
-
-            <div class="khomanguon-table-wrap">
-                <table class="table table-striped table-hover khomanguon-admin-table khomanguon-r2-table">
-                    <thead>
-                        <tr>
-                            <th><?php echo esc_html__('Tên file', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Object key', 'khomanguon-transaction-manager'); ?></th>
-                            <th class="khomanguon-r2-path-column"><?php echo esc_html__('File path', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Dung lượng', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Cập nhật', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Lượt tải', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Member tải', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Doanh thu', 'khomanguon-transaction-manager'); ?></th>
-                            <th><?php echo esc_html__('Thao tác', 'khomanguon-transaction-manager'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody id="khomanguon-r2-files-body">
-                        <tr>
-                            <td colspan="9"><?php echo esc_html($has_configured_provider ? __('Đang tải danh sách tệp...', 'khomanguon-transaction-manager') : __('Màn hình quản lý file đang bị vô hiệu hoá vì thiếu cấu hình S3/R2.', 'khomanguon-transaction-manager')); ?></td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>

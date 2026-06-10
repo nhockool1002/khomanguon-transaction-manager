@@ -3,26 +3,33 @@ jQuery(document).ready(function($) {
 
     var partSize = khomanguonR2Upload.partSize || 25 * 1024 * 1024;
     var continuationToken = '';
+    var activeManagerProvider = $('.khomanguon-cloud-tab.is-active').data('provider') || 'r2';
 
-    function getProvider() {
+    function getUploadProvider() {
         return $('#khomanguon-cloud-provider').val() || 'r2';
     }
 
-    function getProviderConfig() {
+    function getManagerProvider() {
+        return activeManagerProvider || 'r2';
+    }
+
+    function getProviderConfig(provider) {
         var providers = khomanguonR2Upload.providers || {};
 
-        return providers[getProvider()] || {};
+        return providers[provider || getUploadProvider()] || {};
     }
 
     function request(action, data) {
+        data = data || {};
+
         return $.ajax({
             url: khomanguonR2Upload.ajaxUrl,
             method: 'POST',
             data: $.extend({
                 action: action,
                 nonce: khomanguonR2Upload.nonce,
-                provider: getProvider()
-            }, data || {})
+                provider: data.provider || getUploadProvider()
+            }, data)
         });
     }
 
@@ -47,7 +54,7 @@ jQuery(document).ready(function($) {
     }
 
     function joinKey(prefix, fileName) {
-        prefix = joinPrefix(getProviderConfig().prefix || '', prefix);
+        prefix = joinPrefix(getProviderConfig(getUploadProvider()).prefix || '', prefix);
         fileName = normalizeKey(fileName);
 
         if (prefix && prefix.charAt(prefix.length - 1) !== '/') {
@@ -82,7 +89,7 @@ jQuery(document).ready(function($) {
     }
 
     function getFilePath(key) {
-        var bucket = normalizeKey(getProviderConfig().bucket || '');
+        var bucket = normalizeKey(getProviderConfig(getManagerProvider()).bucket || '');
 
         return bucket ? bucket + '/' + normalizeKey(key) : normalizeKey(key);
     }
@@ -108,16 +115,26 @@ jQuery(document).ready(function($) {
     }
 
     function updateProviderState() {
-        var config = getProviderConfig();
-        var isConfigured = !!config.configured;
-        var prefix = config.prefix || '';
-        var disabled = !isConfigured;
+        updateUploadProviderState();
+        updateManagerProviderState();
+    }
 
-        $('#khomanguon-r2-file, #khomanguon-r2-prefix, #khomanguon-r2-key, #khomanguon-r2-start-upload, #khomanguon-r2-list-prefix, #khomanguon-r2-refresh, #khomanguon-r2-apply-cors, #khomanguon-r2-show-file-path').prop('disabled', disabled);
-        $('#khomanguon-r2-key-help').text('Upload prefix hiện tại: ' + (prefix || '/') + '. Key được lưu theo provider ' + (config.label || getProvider()) + '.');
+    function updateUploadProviderState() {
+        var config = getProviderConfig(getUploadProvider());
+        var disabled = !config.configured;
+
+        $('#khomanguon-r2-file, #khomanguon-r2-prefix, #khomanguon-r2-key, #khomanguon-r2-start-upload, #khomanguon-r2-apply-cors').prop('disabled', disabled);
+        $('#khomanguon-r2-key-help').text('Upload prefix hiện tại: ' + (config.prefix || '/') + '. Key được lưu theo provider ' + (config.label || getUploadProvider()) + '.');
+    }
+
+    function updateManagerProviderState() {
+        var config = getProviderConfig(getManagerProvider());
+        var disabled = !config.configured;
+
+        $('#khomanguon-r2-list-prefix, #khomanguon-r2-refresh, #khomanguon-r2-show-file-path').prop('disabled', disabled);
 
         if (disabled) {
-            $('#khomanguon-r2-files-body').html('<tr><td colspan="9">Provider này chưa được cấu hình nên màn hình đang bị vô hiệu hoá.</td></tr>');
+            $('#khomanguon-r2-files-body').html('<tr><td colspan="9">Tab này chưa được cấu hình nên danh sách file đang bị vô hiệu hoá.</td></tr>');
             updateTotals(0, 0, 0);
         }
     }
@@ -283,8 +300,8 @@ jQuery(document).ready(function($) {
     }
 
     function loadFiles(resetToken) {
-        if (!getProviderConfig().configured) {
-            updateProviderState();
+        if (!getProviderConfig(getManagerProvider()).configured) {
+            updateManagerProviderState();
             return;
         }
 
@@ -295,6 +312,7 @@ jQuery(document).ready(function($) {
         $('#khomanguon-r2-files-body').html('<tr><td colspan="9">Đang tải danh sách tệp...</td></tr>');
 
         request('khomanguon_r2_list_files', {
+            provider: getManagerProvider(),
             prefix: normalizeKey($('#khomanguon-r2-list-prefix').val()),
             continuation_token: continuationToken
         }).done(function(response) {
@@ -326,12 +344,25 @@ jQuery(document).ready(function($) {
     });
 
     $('#khomanguon-cloud-provider').on('change', function() {
-        updateProviderState();
+        updateUploadProviderState();
         var fileInput = $('#khomanguon-r2-file')[0];
         var file = fileInput && fileInput.files ? fileInput.files[0] : null;
         if (file) {
             $('#khomanguon-r2-key').val(joinKey($('#khomanguon-r2-prefix').val(), file.name));
         }
+    });
+
+    $('.khomanguon-cloud-tab').on('click', function() {
+        var tab = $(this);
+        if (tab.prop('disabled')) {
+            return;
+        }
+
+        activeManagerProvider = tab.data('provider') || 'r2';
+        $('.khomanguon-cloud-tab').removeClass('is-active').attr('aria-selected', 'false');
+        tab.addClass('is-active').attr('aria-selected', 'true');
+        $('#khomanguon-r2-list-prefix').val('');
+        updateManagerProviderState();
         loadFiles(true);
     });
 
@@ -388,11 +419,12 @@ jQuery(document).ready(function($) {
 
     $(document).on('click', '.khomanguon-r2-delete-file', function() {
         var key = $(this).data('key');
-        if (!window.confirm('Xoá tệp này khỏi R2?\n' + key)) {
+        if (!window.confirm('Xoá tệp này khỏi cloud storage?\n' + key)) {
             return;
         }
 
         request('khomanguon_r2_delete_file', {
+            provider: getManagerProvider(),
             key: key
         }).done(function() {
             loadFiles(true);
@@ -427,6 +459,7 @@ jQuery(document).ready(function($) {
         setStatus('Đang lưu tên file...');
 
         request('khomanguon_r2_update_file_name', {
+            provider: getManagerProvider(),
             key: key,
             display_name: displayName
         }).done(function(response) {

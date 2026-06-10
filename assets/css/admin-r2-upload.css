@@ -59,6 +59,34 @@
     background: #f0fdf4;
 }
 
+.khomanguon-cloud-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #dcdcde;
+}
+
+.khomanguon-cloud-tab {
+    margin-bottom: -1px !important;
+    border-radius: 8px 8px 0 0 !important;
+    border-color: #dcdcde !important;
+    background: #f6f7f7 !important;
+    color: #50575e !important;
+    font-weight: 700;
+}
+
+.khomanguon-cloud-tab.is-active {
+    border-bottom-color: #fff !important;
+    background: #fff !important;
+    color: #2271b1 !important;
+}
+
+.khomanguon-cloud-tab:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .khomanguon-r2-upload-grid {
     display: grid;
     grid-template-columns: minmax(220px, 1fr) minmax(180px, 260px);
