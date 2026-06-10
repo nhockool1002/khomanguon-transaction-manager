@@ -77,7 +77,7 @@
 .wp-block-latest-comments li {
     position: relative;
     margin: 0;
-    padding: 9px 0 9px 20px;
+    padding: 9px 0 9px 30px !important;
     border-bottom: 1px dashed rgba(148, 163, 184, 0.22);
     color: var(--khomanguon-widget-muted);
     font-size: 13px;
@@ -100,14 +100,14 @@
 .wp-block-latest-comments li::before {
     position: absolute !important;
     top: calc(9px + 0.72em) !important;
-    left: 2px !important;
+    left: 10px !important;
     display: block !important;
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 999px;
     background: linear-gradient(135deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef);
     background-size: 300% 300%;
-    box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.1), 0 0 12px rgba(217, 70, 239, 0.28);
+    box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.08), 0 0 10px rgba(217, 70, 239, 0.22);
     content: "" !important;
     animation: khomanguon-widget-circle-rainbow 2.8s linear infinite;
     transform: translateY(-50%);
@@ -133,8 +133,8 @@
 .widget_recent_comments li:hover::before,
 .wp-block-latest-posts li:hover::before,
 .wp-block-latest-comments li:hover::before {
-    transform: translateY(-50%) scale(1.35);
-    box-shadow: 0 0 0 6px rgba(217, 70, 239, 0.14), 0 0 18px rgba(6, 182, 212, 0.38);
+    transform: translateY(-50%) scale(1.28);
+    box-shadow: 0 0 0 5px rgba(217, 70, 239, 0.12), 0 0 16px rgba(6, 182, 212, 0.36);
 }
 
 .widget_recent_entries a,
@@ -155,6 +155,23 @@
 .wp-block-latest-posts a:focus,
 .wp-block-latest-comments a:hover,
 .wp-block-latest-comments a:focus {
+    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
+    background-size: 300% 100%;
+    color: transparent;
+    text-decoration: none;
+    animation: khomanguon-widget-rainbow-text 2s linear infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.widget_recent_entries li:hover a,
+.widget_recent_entries li:focus-within a,
+.widget_recent_comments li:hover a,
+.widget_recent_comments li:focus-within a,
+.wp-block-latest-posts li:hover a,
+.wp-block-latest-posts li:focus-within a,
+.wp-block-latest-comments li:hover a,
+.wp-block-latest-comments li:focus-within a {
     background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c);
     background-size: 300% 100%;
     color: transparent;
@@ -195,6 +212,17 @@
     .wp-block-latest-posts a:focus,
     .wp-block-latest-comments a:hover,
     .wp-block-latest-comments a:focus {
+        animation: none;
+    }
+
+    .widget_recent_entries li:hover a,
+    .widget_recent_entries li:focus-within a,
+    .widget_recent_comments li:hover a,
+    .widget_recent_comments li:focus-within a,
+    .wp-block-latest-posts li:hover a,
+    .wp-block-latest-posts li:focus-within a,
+    .wp-block-latest-comments li:hover a,
+    .wp-block-latest-comments li:focus-within a {
         animation: none;
     }
 
