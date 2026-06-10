@@ -201,6 +201,14 @@ body.single-post article h1:first-of-type {
     transition: filter 180ms ease, transform 180ms ease;
 }
 
+body.single-post h1.entry-title a,
+body.single-post .entry-header h1 a,
+body.single-post .post-title h1 a,
+body.single-post article h1:first-of-type a {
+    color: inherit;
+    text-decoration: none;
+}
+
 body.single-post h1.entry-title::before,
 body.single-post .entry-header h1::before,
 body.single-post .post-title h1::before,
@@ -257,9 +265,26 @@ body.single-post h1.entry-title:hover::before,
 body.single-post .entry-header h1:hover::before,
 body.single-post .post-title h1:hover::before,
 body.single-post article h1:first-of-type:hover::before {
-    border-color: rgba(34, 211, 238, 0.28);
-    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.1), 0 0 22px rgba(217, 70, 239, 0.1);
+    border-color: rgba(34, 211, 238, 0.34);
+    background:
+        radial-gradient(circle at top left, rgba(250, 204, 21, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.2), transparent 34%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(30, 41, 59, 0.94) 100%);
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.2), 0 0 24px rgba(217, 70, 239, 0.16);
     opacity: 1;
+}
+
+body.single-post h1.entry-title:hover a,
+body.single-post .entry-header h1:hover a,
+body.single-post .post-title h1:hover a,
+body.single-post article h1:first-of-type:hover a {
+    background: linear-gradient(90deg, #ff4d8d, #ffb000, #fff176, #3ee879, #22d3ee, #a78bfa, #f472b6, #ff4d8d);
+    background-size: 500% 100%;
+    color: transparent !important;
+    animation: khomanguon-widget-rainbow-slide 1.8s linear infinite !important;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 body.single-post h1.entry-title:hover::after,
@@ -295,6 +320,16 @@ body.single-post article h1:first-of-type:hover::after {
     100% {
         background-position: 100% 50%;
         filter: hue-rotate(360deg);
+    }
+}
+
+@keyframes khomanguon-widget-rainbow-slide {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 500% 50%;
     }
 }
 
@@ -335,7 +370,11 @@ body.single-post article h1:first-of-type:hover::after {
     body.single-post h1.entry-title:hover::after,
     body.single-post .entry-header h1:hover::after,
     body.single-post .post-title h1:hover::after,
-    body.single-post article h1:first-of-type:hover::after {
+    body.single-post article h1:first-of-type:hover::after,
+    body.single-post h1.entry-title:hover a,
+    body.single-post .entry-header h1:hover a,
+    body.single-post .post-title h1:hover a,
+    body.single-post article h1:first-of-type:hover a {
         animation: none;
     }
 }
@@ -394,12 +433,13 @@ body.single-post article h1:first-of-type:hover::after {
 .wp-block-latest-comments li a:focus,
 .wp-block-latest-comments li:hover a,
 .wp-block-latest-comments li:focus-within a {
-    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c) !important;
-    background-size: 300% 100% !important;
+    background: linear-gradient(90deg, #ff004c, #ff8a00, #ffee00, #22c55e, #06b6d4, #6366f1, #d946ef, #ff004c, #ff8a00) !important;
+    background-size: 500% 100% !important;
     background-position: 0% 50%;
+    background-repeat: repeat;
     color: transparent !important;
     text-decoration: none !important;
-    animation: khomanguon-widget-rainbow-text 2.4s linear infinite !important;
+    animation: khomanguon-widget-rainbow-slide 1.8s linear infinite !important;
     will-change: background-position;
     -webkit-background-clip: text !important;
     background-clip: text !important;
