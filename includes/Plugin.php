@@ -119,6 +119,13 @@ class Plugin
 
     public function enqueue_frontend_assets()
     {
+        wp_enqueue_style(
+            'khomanguon-frontend-widgets',
+            KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/frontend-widgets.css',
+            array(),
+            KHOMANGUON_TRANSACTION_MANAGER_VERSION
+        );
+
         if (!is_singular('post')) {
             return;
         }
