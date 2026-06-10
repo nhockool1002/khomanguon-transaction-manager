@@ -5,6 +5,7 @@ namespace Khomanguon\TransactionManager\Ajax;
 use Aws\S3\S3Client;
 use Khomanguon\TransactionManager\Plugin;
 use Khomanguon\TransactionManager\R2ClientFactory;
+use Khomanguon\TransactionManager\S3ClientFactory;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -107,32 +108,18 @@ class SignedS3Url
 
                 $bucket = R2ClientFactory::get_bucket();
             } else {
-                $aws_access_key_id = get_option('aws_access_key_id');
-                $aws_secret_access_key = get_option('aws_secret_access_key');
-                $aws_default_region = get_option('aws_default_region');
-                $aws_bucket = get_option('aws_bucket');
-
-                if (empty($aws_access_key_id) || empty($aws_secret_access_key) || empty($aws_default_region) || empty($aws_bucket)) {
+                $s3_client = S3ClientFactory::client();
+                if (is_wp_error($s3_client)) {
                     wp_send_json(
                         array(
-                            'message' => __('Thiếu cấu hình AWS S3.', 'khomanguon-transaction-manager'),
+                            'message' => $s3_client->get_error_message(),
                             'status' => 500,
                         ),
                         500
                     );
                 }
 
-                $s3_client = new S3Client(
-                    array(
-                        'version' => 'latest',
-                        'region' => $aws_default_region,
-                        'credentials' => array(
-                            'key' => $aws_access_key_id,
-                            'secret' => $aws_secret_access_key,
-                        ),
-                    )
-                );
-                $bucket = $aws_bucket;
+                $bucket = S3ClientFactory::get_bucket();
             }
 
             $command = $s3_client->getCommand(
@@ -173,6 +160,19 @@ class SignedS3Url
                 ),
                 400
             );
+        }
+
+        $download_recorded = $this->plugin->repository()->record_file_download(
+            $user_id,
+            $post_id,
+            $provider,
+            $key,
+            $cash,
+            $post_title
+        );
+
+        if (is_wp_error($download_recorded)) {
+            error_log('Download analytics failed: ' . $download_recorded->get_error_message());
         }
 
         wp_send_json(

@@ -28,31 +28,38 @@ if (!defined('ABSPATH')) {
                     <div class="form-group row">
                         <label for="aws_access_key_id" class="col-sm-2 col-form-label">AWS Access Key ID</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="aws_access_key_id" name="aws_access_key_id" value="<?php echo esc_attr(get_option('aws_access_key_id')); ?>" required>
+                            <input type="text" class="form-control" id="aws_access_key_id" name="aws_access_key_id" value="<?php echo esc_attr(get_option('aws_access_key_id')); ?>">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="aws_secret_access_key" class="col-sm-2 col-form-label">AWS Secret Access Key</label>
                         <div class="col-sm-10">
-                            <input type="password" class="form-control" id="aws_secret_access_key" name="aws_secret_access_key" value="<?php echo esc_attr(get_option('aws_secret_access_key')); ?>" required autocomplete="off">
+                            <input type="password" class="form-control" id="aws_secret_access_key" name="aws_secret_access_key" value="<?php echo esc_attr(get_option('aws_secret_access_key')); ?>" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="aws_default_region" class="col-sm-2 col-form-label">AWS Default Region</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="aws_default_region" name="aws_default_region" value="<?php echo esc_attr(get_option('aws_default_region')); ?>" required>
+                            <input type="text" class="form-control" id="aws_default_region" name="aws_default_region" value="<?php echo esc_attr(get_option('aws_default_region')); ?>">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="aws_bucket" class="col-sm-2 col-form-label">AWS Bucket</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="aws_bucket" name="aws_bucket" value="<?php echo esc_attr(get_option('aws_bucket')); ?>" required>
+                            <input type="text" class="form-control" id="aws_bucket" name="aws_bucket" value="<?php echo esc_attr(get_option('aws_bucket')); ?>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="aws_upload_prefix" class="col-sm-2 col-form-label">S3 Upload Prefix</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="aws_upload_prefix" name="aws_upload_prefix" value="<?php echo esc_attr(get_option('aws_upload_prefix')); ?>" placeholder="source-code/">
+                            <small class="form-text text-muted"><?php echo esc_html__('Folder/prefix mà IAM user được phân quyền upload, list và xoá. Để trống nếu quyền áp dụng toàn bucket.', 'khomanguon-transaction-manager'); ?></small>
                         </div>
                     </div>
 
                     <hr />
                     <h3>Cloudflare R2 Settings</h3>
-                    <p class="description"><?php echo esc_html__('R2 tương thích S3. Khi cấu hình R2 đầy đủ, plugin sẽ ưu tiên tạo link tải từ R2 và bật trang upload/quản lý tệp R2.', 'khomanguon-transaction-manager'); ?></p>
+                    <p class="description"><?php echo esc_html__('R2 tương thích S3. Sau khi cấu hình đầy đủ, bạn có thể upload/quản lý tệp R2 và chọn R2 cho từng bài viết.', 'khomanguon-transaction-manager'); ?></p>
                     <div class="form-group row">
                         <label for="r2_account_id" class="col-sm-2 col-form-label">Account ID</label>
                         <div class="col-sm-10">
@@ -82,6 +89,13 @@ if (!defined('ABSPATH')) {
                         <label for="r2_bucket" class="col-sm-2 col-form-label">Bucket Name</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="r2_bucket" name="r2_bucket" value="<?php echo esc_attr(get_option('r2_bucket')); ?>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="r2_upload_prefix" class="col-sm-2 col-form-label">R2 Upload Prefix</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="r2_upload_prefix" name="r2_upload_prefix" value="<?php echo esc_attr(get_option('r2_upload_prefix')); ?>" placeholder="source-code/">
+                            <small class="form-text text-muted"><?php echo esc_html__('Folder/prefix được phép upload, list và xoá trong bucket R2. Để trống nếu quyền áp dụng toàn bucket.', 'khomanguon-transaction-manager'); ?></small>
                         </div>
                     </div>
 

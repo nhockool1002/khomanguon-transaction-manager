@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
 
 class Installer
 {
+    const DB_VERSION = '1.2.0';
+
     public static function activate()
     {
         global $wpdb;
@@ -18,6 +20,8 @@ class Installer
         $point_table = $wpdb->prefix . 'point';
         $history_table = $wpdb->prefix . 'point_history';
         $orders_table = $wpdb->prefix . 'point_orders';
+        $downloads_table = $wpdb->prefix . 'khomanguon_file_downloads';
+        $file_meta_table = $wpdb->prefix . 'khomanguon_file_meta';
 
         if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $point_table)) !== $point_table) {
             dbDelta("CREATE TABLE $point_table (
@@ -53,6 +57,44 @@ class Installer
                 timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY  (id)
             ) $charset_collate;");
+        }
+
+        dbDelta("CREATE TABLE $downloads_table (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) unsigned NOT NULL,
+            post_id bigint(20) unsigned NOT NULL,
+            provider varchar(10) NOT NULL,
+            object_key varchar(1024) NOT NULL,
+            file_path varchar(1200) NOT NULL,
+            cash_amount bigint(20) unsigned NOT NULL DEFAULT 0,
+            post_title text NOT NULL,
+            downloaded_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id),
+            KEY provider_object_key (provider, object_key(191)),
+            KEY user_id (user_id),
+            KEY post_id (post_id),
+            KEY downloaded_at (downloaded_at)
+        ) $charset_collate;");
+
+        dbDelta("CREATE TABLE $file_meta_table (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            provider varchar(10) NOT NULL,
+            object_key varchar(1024) NOT NULL,
+            display_name varchar(1024) NOT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id),
+            UNIQUE KEY provider_object_key (provider, object_key(191)),
+            KEY provider (provider)
+        ) $charset_collate;");
+
+        update_option('khomanguon_transaction_manager_db_version', self::DB_VERSION);
+    }
+
+    public static function maybe_upgrade()
+    {
+        if (get_option('khomanguon_transaction_manager_db_version') !== self::DB_VERSION) {
+            self::activate();
         }
     }
 }

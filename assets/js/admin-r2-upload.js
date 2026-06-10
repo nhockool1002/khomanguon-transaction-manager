@@ -4,13 +4,24 @@ jQuery(document).ready(function($) {
     var partSize = khomanguonR2Upload.partSize || 25 * 1024 * 1024;
     var continuationToken = '';
 
+    function getProvider() {
+        return $('#khomanguon-cloud-provider').val() || 'r2';
+    }
+
+    function getProviderConfig() {
+        var providers = khomanguonR2Upload.providers || {};
+
+        return providers[getProvider()] || {};
+    }
+
     function request(action, data) {
         return $.ajax({
             url: khomanguonR2Upload.ajaxUrl,
             method: 'POST',
             data: $.extend({
                 action: action,
-                nonce: khomanguonR2Upload.nonce
+                nonce: khomanguonR2Upload.nonce,
+                provider: getProvider()
             }, data || {})
         });
     }
@@ -36,7 +47,7 @@ jQuery(document).ready(function($) {
     }
 
     function joinKey(prefix, fileName) {
-        prefix = normalizeKey(prefix);
+        prefix = joinPrefix(getProviderConfig().prefix || '', prefix);
         fileName = normalizeKey(fileName);
 
         if (prefix && prefix.charAt(prefix.length - 1) !== '/') {
@@ -44,6 +55,17 @@ jQuery(document).ready(function($) {
         }
 
         return prefix + fileName;
+    }
+
+    function joinPrefix(basePrefix, childPrefix) {
+        basePrefix = normalizeKey(basePrefix);
+        childPrefix = normalizeKey(childPrefix);
+
+        if (basePrefix && basePrefix.charAt(basePrefix.length - 1) !== '/') {
+            basePrefix += '/';
+        }
+
+        return basePrefix + childPrefix;
     }
 
     function formatSize(bytes) {
@@ -60,7 +82,7 @@ jQuery(document).ready(function($) {
     }
 
     function getFilePath(key) {
-        var bucket = normalizeKey(khomanguonR2Upload.bucket || '');
+        var bucket = normalizeKey(getProviderConfig().bucket || '');
 
         return bucket ? bucket + '/' + normalizeKey(key) : normalizeKey(key);
     }
@@ -79,6 +101,31 @@ jQuery(document).ready(function($) {
     function toggleFilePathColumn() {
         var visible = $('#khomanguon-r2-show-file-path').is(':checked');
         $('.khomanguon-r2-path-column').toggle(visible);
+    }
+
+    function formatCash(amount) {
+        return (Number(amount) || 0).toLocaleString('vi-VN') + ' @Cash';
+    }
+
+    function updateProviderState() {
+        var config = getProviderConfig();
+        var isConfigured = !!config.configured;
+        var prefix = config.prefix || '';
+        var disabled = !isConfigured;
+
+        $('#khomanguon-r2-file, #khomanguon-r2-prefix, #khomanguon-r2-key, #khomanguon-r2-start-upload, #khomanguon-r2-list-prefix, #khomanguon-r2-refresh, #khomanguon-r2-apply-cors, #khomanguon-r2-show-file-path').prop('disabled', disabled);
+        $('#khomanguon-r2-key-help').text('Upload prefix hiện tại: ' + (prefix || '/') + '. Key được lưu theo provider ' + (config.label || getProvider()) + '.');
+
+        if (disabled) {
+            $('#khomanguon-r2-files-body').html('<tr><td colspan="9">Provider này chưa được cấu hình nên màn hình đang bị vô hiệu hoá.</td></tr>');
+            updateTotals(0, 0, 0);
+        }
+    }
+
+    function updateTotals(fileCount, downloadCount, revenue) {
+        $('#khomanguon-r2-total-files').text((Number(fileCount) || 0).toLocaleString('vi-VN'));
+        $('#khomanguon-r2-total-downloads').text((Number(downloadCount) || 0).toLocaleString('vi-VN'));
+        $('#khomanguon-r2-total-revenue').text(formatCash(revenue));
     }
 
     function uploadPart(url, blob) {
@@ -103,7 +150,7 @@ jQuery(document).ready(function($) {
             };
 
             xhr.onerror = function() {
-                reject(new Error('Không thể kết nối tới R2. Kiểm tra CORS và kết nối mạng.'));
+                reject(new Error('Không thể kết nối tới cloud storage. Kiểm tra CORS và kết nối mạng.'));
             };
 
             xhr.send(blob);
@@ -121,7 +168,7 @@ jQuery(document).ready(function($) {
         }
 
         if (!key) {
-            setStatus('Vui lòng nhập object key trên R2.', true);
+            setStatus('Vui lòng nhập object key trên cloud storage.', true);
             return;
         }
 
@@ -139,6 +186,8 @@ jQuery(document).ready(function($) {
             });
 
             uploadId = created.uploadId;
+            key = normalizeKey(created.key || key);
+            $('#khomanguon-r2-key').val(key);
 
             var totalParts = Math.ceil(file.size / partSize);
             var completedParts = [];
@@ -192,7 +241,8 @@ jQuery(document).ready(function($) {
         body.empty();
 
         if (!files.length) {
-            body.append('<tr><td colspan="5">Không có tệp nào.</td></tr>');
+            body.append('<tr><td colspan="9">Không có tệp nào.</td></tr>');
+            updateTotals(0, 0, 0);
             return;
         }
 
@@ -200,11 +250,22 @@ jQuery(document).ready(function($) {
             var row = $('<tr></tr>');
             var key = $('<code></code>').text(file.key);
             var filePath = getFilePath(file.key);
+            var members = (file.members || []).map(function(member) {
+                return member.name + ' (' + member.downloadCount + ' lần)';
+            }).join(', ');
+            var displayNameInput = $('<input type="text" class="form-control khomanguon-r2-display-name">')
+                .val(file.displayName || file.key)
+                .attr('data-key', file.key)
+                .attr('data-original-name', file.displayName || file.key);
 
+            row.append($('<td class="khomanguon-r2-name-cell"></td>').append(displayNameInput));
             row.append($('<td class="khomanguon-r2-key-cell"></td>').append(key));
             row.append($('<td class="khomanguon-r2-path-column khomanguon-r2-path-cell"></td>').append($('<code></code>').text(filePath)));
             row.append($('<td></td>').text(formatSize(file.size)));
             row.append($('<td></td>').text(file.lastModified || '-'));
+            row.append($('<td></td>').text(Number(file.downloadCount || 0).toLocaleString('vi-VN')));
+            row.append($('<td class="khomanguon-r2-members-cell"></td>').text(members || '-'));
+            row.append($('<td></td>').text(formatCash(file.revenue)));
             row.append(
                 $('<td></td>').append(
                     $('<button type="button" class="button button-small khomanguon-r2-copy-key">Copy key</button>').attr('data-key', file.key),
@@ -222,11 +283,16 @@ jQuery(document).ready(function($) {
     }
 
     function loadFiles(resetToken) {
+        if (!getProviderConfig().configured) {
+            updateProviderState();
+            return;
+        }
+
         if (resetToken) {
             continuationToken = '';
         }
 
-        $('#khomanguon-r2-files-body').html('<tr><td colspan="5">Đang tải danh sách tệp...</td></tr>');
+        $('#khomanguon-r2-files-body').html('<tr><td colspan="9">Đang tải danh sách tệp...</td></tr>');
 
         request('khomanguon_r2_list_files', {
             prefix: normalizeKey($('#khomanguon-r2-list-prefix').val()),
@@ -234,9 +300,11 @@ jQuery(document).ready(function($) {
         }).done(function(response) {
             continuationToken = response.nextContinuationToken || '';
             renderFiles(response.files || []);
+            updateTotals(response.totalTrackedFiles || (response.files || []).length, response.totalDownloads || 0, response.totalRevenue || 0);
         }).fail(function(xhr) {
             var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Không thể tải danh sách tệp.';
-            $('#khomanguon-r2-files-body').html('<tr><td colspan="5">' + message + '</td></tr>');
+            $('#khomanguon-r2-files-body').html('<tr><td colspan="9">' + message + '</td></tr>');
+            updateTotals(0, 0, 0);
         });
     }
 
@@ -255,6 +323,16 @@ jQuery(document).ready(function($) {
         if (file) {
             $('#khomanguon-r2-key').val(joinKey($(this).val(), file.name));
         }
+    });
+
+    $('#khomanguon-cloud-provider').on('change', function() {
+        updateProviderState();
+        var fileInput = $('#khomanguon-r2-file')[0];
+        var file = fileInput && fileInput.files ? fileInput.files[0] : null;
+        if (file) {
+            $('#khomanguon-r2-key').val(joinKey($('#khomanguon-r2-prefix').val(), file.name));
+        }
+        loadFiles(true);
     });
 
     $('#khomanguon-r2-start-upload').on('click', function() {
@@ -324,7 +402,61 @@ jQuery(document).ready(function($) {
         });
     });
 
+    function saveDisplayName(input) {
+        var field = $(input);
+        var key = field.data('key');
+        var displayName = (field.val() || '').trim();
+        var originalName = field.attr('data-original-name') || '';
+
+        if (field.data('saving')) {
+            return;
+        }
+
+        if (!displayName) {
+            field.val(originalName || key);
+            setStatus('Tên file không được để trống.', true);
+            return;
+        }
+
+        if (displayName === originalName) {
+            return;
+        }
+
+        field.data('saving', true);
+        field.prop('disabled', true);
+        setStatus('Đang lưu tên file...');
+
+        request('khomanguon_r2_update_file_name', {
+            key: key,
+            display_name: displayName
+        }).done(function(response) {
+            field.attr('data-original-name', response.displayName || displayName);
+            field.val(response.displayName || displayName);
+            setStatus('Đã lưu tên file: ' + (response.displayName || displayName));
+        }).fail(function(xhr) {
+            var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Không thể lưu tên file.';
+            field.val(originalName || key);
+            setStatus(message, true);
+        }).always(function() {
+            field.data('saving', false);
+            field.prop('disabled', false);
+        });
+    }
+
+    $(document).on('blur', '.khomanguon-r2-display-name', function() {
+        saveDisplayName(this);
+    });
+
+    $(document).on('keydown', '.khomanguon-r2-display-name', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            saveDisplayName(this);
+            $(this).blur();
+        }
+    });
+
     if ($('#khomanguon-r2-files-body').length) {
+        updateProviderState();
         loadFiles(true);
     }
 });

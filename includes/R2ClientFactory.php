@@ -59,4 +59,17 @@ class R2ClientFactory
     {
         return 'https://' . self::get_account_id() . '.r2.cloudflarestorage.com';
     }
+
+    public static function get_upload_prefix()
+    {
+        return self::normalize_prefix((string) get_option('r2_upload_prefix'));
+    }
+
+    public static function normalize_prefix($prefix)
+    {
+        $prefix = str_replace('\\', '/', sanitize_text_field((string) $prefix));
+        $prefix = trim(preg_replace('#/+#', '/', $prefix), '/');
+
+        return $prefix === '' ? '' : $prefix . '/';
+    }
 }

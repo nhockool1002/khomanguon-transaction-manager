@@ -3,6 +3,8 @@
 namespace Khomanguon\TransactionManager\Admin;
 
 use Khomanguon\TransactionManager\Plugin;
+use Khomanguon\TransactionManager\R2ClientFactory;
+use Khomanguon\TransactionManager\S3ClientFactory;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -50,8 +52,8 @@ class Menu
 
         add_submenu_page(
             'payment-management',
-            __('R2 Upload', 'khomanguon-transaction-manager'),
-            __('R2 Upload', 'khomanguon-transaction-manager'),
+            __('Cloud Files', 'khomanguon-transaction-manager'),
+            __('Cloud Files', 'khomanguon-transaction-manager'),
             'manage_options',
             'r2-upload-management',
             array($this->r2_upload_page, 'render')
@@ -129,7 +131,20 @@ class Menu
                     'ajaxUrl' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('khomanguon_r2_upload'),
                     'partSize' => 25 * 1024 * 1024,
-                    'bucket' => get_option('r2_bucket'),
+                    'providers' => array(
+                        's3' => array(
+                            'label' => 'AWS S3',
+                            'bucket' => S3ClientFactory::get_bucket(),
+                            'prefix' => S3ClientFactory::get_upload_prefix(),
+                            'configured' => S3ClientFactory::is_configured(),
+                        ),
+                        'r2' => array(
+                            'label' => 'Cloudflare R2',
+                            'bucket' => R2ClientFactory::get_bucket(),
+                            'prefix' => R2ClientFactory::get_upload_prefix(),
+                            'configured' => R2ClientFactory::is_configured(),
+                        ),
+                    ),
                 )
             );
         }

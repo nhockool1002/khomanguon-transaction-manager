@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Khomanguon Transaction Manager
  * Description: Quản lý giao dịch, ví @Cash, mở khóa S3 và cấu hình cloud cho KHOMANGUON.ORG.
- * Version: 1.0.0.b
+ * Version: 1.0.0.c
  * Author: KHOMANGUON.ORG
  * Text Domain: khomanguon-transaction-manager
  * Update URI: https://github.com/nhockool1002/khomanguon-transaction-manager.
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KHOMANGUON_TRANSACTION_MANAGER_VERSION', '1.0.0.b');
+define('KHOMANGUON_TRANSACTION_MANAGER_VERSION', '1.0.0.c');
 define('KHOMANGUON_TRANSACTION_MANAGER_FILE', __FILE__);
 define('KHOMANGUON_TRANSACTION_MANAGER_PATH', plugin_dir_path(__FILE__));
 define('KHOMANGUON_TRANSACTION_MANAGER_URL', plugin_dir_url(__FILE__));
@@ -44,6 +44,7 @@ if (file_exists($khomanguon_autoload)) {
 
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Installer.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/PointsRepository.php';
+require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/S3ClientFactory.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/R2ClientFactory.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/Mail/MailjetMailer.php';
 require_once KHOMANGUON_TRANSACTION_MANAGER_PATH . 'includes/GitHubUpdater.php';

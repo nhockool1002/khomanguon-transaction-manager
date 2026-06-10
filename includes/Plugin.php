@@ -31,6 +31,8 @@ class Plugin
 
     private function __construct()
     {
+        Installer::maybe_upgrade();
+
         $this->repository = new PointsRepository();
         $this->mailer = new MailjetMailer();
 
@@ -40,7 +42,7 @@ class Plugin
         new Menu($this);
         new UpdateOrderStatus($this);
         new SignedS3Url($this);
-        new R2Upload();
+        new R2Upload($this);
         new S3MetaBox();
     }
 
