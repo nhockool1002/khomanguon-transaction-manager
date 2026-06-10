@@ -131,7 +131,7 @@ jQuery(document).ready(function($) {
         var config = getProviderConfig(getManagerProvider());
         var disabled = !config.configured;
 
-        $('#khomanguon-r2-list-prefix, #khomanguon-r2-refresh, #khomanguon-r2-show-file-path').prop('disabled', disabled);
+        $('#khomanguon-r2-list-prefix, #khomanguon-r2-refresh, #khomanguon-r2-show-file-path, #khomanguon-r2-include-admin').prop('disabled', disabled);
 
         if (disabled) {
             $('#khomanguon-r2-files-body').html('<tr><td colspan="9">Tab này chưa được cấu hình nên danh sách file đang bị vô hiệu hoá.</td></tr>');
@@ -314,7 +314,8 @@ jQuery(document).ready(function($) {
         request('khomanguon_r2_list_files', {
             provider: getManagerProvider(),
             prefix: normalizeKey($('#khomanguon-r2-list-prefix').val()),
-            continuation_token: continuationToken
+            continuation_token: continuationToken,
+            include_admin: $('#khomanguon-r2-include-admin').is(':checked') ? 1 : 0
         }).done(function(response) {
             continuationToken = response.nextContinuationToken || '';
             renderFiles(response.files || []);
@@ -415,6 +416,10 @@ jQuery(document).ready(function($) {
 
     $('#khomanguon-r2-show-file-path').on('change', function() {
         toggleFilePathColumn();
+    });
+
+    $(document).on('change', '#khomanguon-r2-include-admin', function() {
+        loadFiles(true);
     });
 
     $(document).on('click', '.khomanguon-r2-delete-file', function() {

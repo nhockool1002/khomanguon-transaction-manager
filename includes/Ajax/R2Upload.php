@@ -39,6 +39,7 @@ class R2Upload
         $prefix = $this->sanitize_object_key($this->post_value('prefix'), true);
         $prefix = $this->apply_base_prefix($storage['prefix'], $prefix, true);
         $continuation_token = sanitize_text_field($this->post_value('continuation_token'));
+        $include_admin = absint($this->post_value('include_admin')) === 1;
 
         try {
             $args = array(
@@ -69,9 +70,9 @@ class R2Upload
                 );
             }
 
-            $analytics = $this->plugin->repository()->get_download_stats_for_keys($storage['provider'], $keys);
+            $analytics = $this->plugin->repository()->get_download_stats_for_keys($storage['provider'], $keys, $include_admin);
             $display_names = $this->plugin->repository()->get_file_display_names($storage['provider'], $keys);
-            $totals = $this->plugin->repository()->get_download_totals($storage['provider'], $prefix);
+            $totals = $this->plugin->repository()->get_download_totals($storage['provider'], $prefix, $include_admin);
 
             foreach ($files as &$file) {
                 $stats = isset($analytics[$file['key']]) ? $analytics[$file['key']] : array(
@@ -96,6 +97,7 @@ class R2Upload
                     'totalTrackedFiles' => $totals['file_count'],
                     'totalDownloads' => $totals['download_count'],
                     'totalRevenue' => $totals['revenue'],
+                    'includeAdmin' => $include_admin,
                     'isTruncated' => (bool) $result->get('IsTruncated'),
                     'nextContinuationToken' => (string) $result->get('NextContinuationToken'),
                     'status' => 200,

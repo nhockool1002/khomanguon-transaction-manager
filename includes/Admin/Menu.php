@@ -102,6 +102,9 @@ class Menu
         }
 
         if (strpos($hook_suffix, 'r2-upload-management') !== false) {
+            $r2_upload_css = KHOMANGUON_TRANSACTION_MANAGER_PATH . 'assets/css/admin-r2-upload.css';
+            $r2_upload_js = KHOMANGUON_TRANSACTION_MANAGER_PATH . 'assets/js/admin-r2-upload.js';
+
             wp_enqueue_style(
                 'khomanguon-admin-transactions',
                 KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/admin-transactions.css',
@@ -113,14 +116,14 @@ class Menu
                 'khomanguon-admin-r2-upload',
                 KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/admin-r2-upload.css',
                 array('bootstrap-css', 'khomanguon-admin-transactions'),
-                KHOMANGUON_TRANSACTION_MANAGER_VERSION
+                file_exists($r2_upload_css) ? (string) filemtime($r2_upload_css) : KHOMANGUON_TRANSACTION_MANAGER_VERSION
             );
 
             wp_enqueue_script(
                 'khomanguon-admin-r2-upload',
                 KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/js/admin-r2-upload.js',
                 array('jquery', 'sweetalert2'),
-                KHOMANGUON_TRANSACTION_MANAGER_VERSION,
+                file_exists($r2_upload_js) ? (string) filemtime($r2_upload_js) : KHOMANGUON_TRANSACTION_MANAGER_VERSION,
                 true
             );
 

@@ -150,7 +150,7 @@ class PointsRepository
         return (int) $this->wpdb->insert_id;
     }
 
-    public function get_download_stats_for_keys($provider, $keys)
+    public function get_download_stats_for_keys($provider, $keys, $include_admin = false)
     {
         $provider = sanitize_text_field($provider);
         if (!in_array($provider, array('s3', 'r2'), true) || empty($keys)) {
@@ -170,11 +170,12 @@ class PointsRepository
         }
 
         $placeholders = implode(',', array_fill(0, count($keys), '%s'));
-        $summary_args = array_merge(array($provider), $keys);
+        $admin_filter = $this->admin_download_filter_sql($include_admin);
+        $summary_args = array_merge(array($provider), $keys, $admin_filter['args']);
         $summary_sql = $this->wpdb->prepare(
             "SELECT object_key, COUNT(*) AS download_count, COALESCE(SUM(cash_amount), 0) AS revenue
             FROM {$this->downloads_table}
-            WHERE provider = %s AND object_key IN ($placeholders)
+            WHERE provider = %s AND object_key IN ($placeholders) {$admin_filter['sql']}
             GROUP BY object_key",
             $summary_args
         );
@@ -194,12 +195,13 @@ class PointsRepository
             $stats[$row->object_key]['revenue'] = (int) $row->revenue;
         }
 
-        $member_args = array_merge(array($provider), $keys);
+        $member_admin_filter = $this->admin_download_filter_sql($include_admin, 'd.user_id');
+        $member_args = array_merge(array($provider), $keys, $member_admin_filter['args']);
         $member_sql = $this->wpdb->prepare(
             "SELECT d.object_key, d.user_id, COUNT(*) AS download_count, COALESCE(SUM(d.cash_amount), 0) AS revenue, u.display_name, u.user_login
             FROM {$this->downloads_table} d
             LEFT JOIN {$this->wpdb->users} u ON d.user_id = u.ID
-            WHERE d.provider = %s AND d.object_key IN ($placeholders)
+            WHERE d.provider = %s AND d.object_key IN ($placeholders) {$member_admin_filter['sql']}
             GROUP BY d.object_key, d.user_id, u.display_name, u.user_login
             ORDER BY download_count DESC, revenue DESC",
             $member_args
@@ -230,7 +232,7 @@ class PointsRepository
         return $stats;
     }
 
-    public function get_download_totals($provider, $prefix = '')
+    public function get_download_totals($provider, $prefix = '', $include_admin = false)
     {
         $provider = sanitize_text_field($provider);
         $prefix = sanitize_text_field($prefix);
@@ -243,14 +245,21 @@ class PointsRepository
             );
         }
 
+        $admin_filter = $this->admin_download_filter_sql($include_admin);
+
         if ($prefix !== '') {
             $row = $this->wpdb->get_row(
                 $this->wpdb->prepare(
                     "SELECT COUNT(*) AS download_count, COALESCE(SUM(cash_amount), 0) AS revenue, COUNT(DISTINCT object_key) AS file_count
                     FROM {$this->downloads_table}
-                    WHERE provider = %s AND object_key LIKE %s",
-                    $provider,
-                    $this->wpdb->esc_like($prefix) . '%'
+                    WHERE provider = %s AND object_key LIKE %s {$admin_filter['sql']}",
+                    array_merge(
+                        array(
+                            $provider,
+                            $this->wpdb->esc_like($prefix) . '%',
+                        ),
+                        $admin_filter['args']
+                    )
                 )
             );
         } else {
@@ -258,8 +267,8 @@ class PointsRepository
                 $this->wpdb->prepare(
                     "SELECT COUNT(*) AS download_count, COALESCE(SUM(cash_amount), 0) AS revenue, COUNT(DISTINCT object_key) AS file_count
                     FROM {$this->downloads_table}
-                    WHERE provider = %s",
-                    $provider
+                    WHERE provider = %s {$admin_filter['sql']}",
+                    array_merge(array($provider), $admin_filter['args'])
                 )
             );
         }
@@ -609,5 +618,27 @@ class PointsRepository
         $bucket = $provider === 'r2' ? R2ClientFactory::get_bucket() : S3ClientFactory::get_bucket();
 
         return $bucket !== '' ? $bucket . '/' . ltrim($object_key, '/') : ltrim($object_key, '/');
+    }
+
+    private function admin_download_filter_sql($include_admin, $user_id_column = 'user_id')
+    {
+        if ($include_admin) {
+            return array(
+                'sql' => '',
+                'args' => array(),
+            );
+        }
+
+        return array(
+            'sql' => "AND {$user_id_column} NOT IN (
+                SELECT user_id
+                FROM {$this->wpdb->usermeta}
+                WHERE meta_key = %s AND meta_value LIKE %s
+            )",
+            'args' => array(
+                $this->wpdb->prefix . 'capabilities',
+                '%administrator%',
+            ),
+        );
     }
 }

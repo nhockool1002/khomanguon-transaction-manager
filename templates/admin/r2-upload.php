@@ -97,6 +97,10 @@ if (!defined('ABSPATH')) {
                     <input type="checkbox" id="khomanguon-r2-show-file-path" checked <?php disabled(!$has_configured_provider); ?>>
                     <?php echo esc_html__('Hiển thị file path', 'khomanguon-transaction-manager'); ?>
                 </label>
+                <label class="khomanguon-r2-toggle">
+                    <input type="checkbox" id="khomanguon-r2-include-admin" <?php disabled(!$has_configured_provider); ?>>
+                    <?php echo esc_html__('Tính cả admin', 'khomanguon-transaction-manager'); ?>
+                </label>
             </div>
 
             <div class="khomanguon-table-wrap">
