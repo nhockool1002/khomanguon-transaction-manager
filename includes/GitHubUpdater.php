@@ -41,6 +41,13 @@ class GitHubUpdater
             return false;
         }
 
+        $latest_version = $this->normalize_version($release['tag_name']);
+        $current_version = !empty($plugin_data['Version']) ? $plugin_data['Version'] : $this->current_version;
+
+        if (!version_compare($latest_version, $current_version, '>')) {
+            return false;
+        }
+
         return $this->build_update_item($release);
     }
 
@@ -147,23 +154,13 @@ class GitHubUpdater
         }
 
         $release = $this->get_latest_release();
-        $tag = $this->get_latest_version_tag();
-
-        if ($release && $tag) {
-            $release_version = $this->normalize_version($release['tag_name']);
-            $tag_version = $this->normalize_version($tag['tag_name']);
-            $latest = version_compare($tag_version, $release_version, '>') ? $tag : $release;
-        } else {
-            $latest = $release ? $release : $tag;
-        }
-
-        if (!$latest) {
+        if (!$release) {
             return false;
         }
 
-        set_site_transient(self::CACHE_KEY, $latest, 6 * HOUR_IN_SECONDS);
+        set_site_transient(self::CACHE_KEY, $release, 6 * HOUR_IN_SECONDS);
 
-        return $latest;
+        return $release;
     }
 
     private function get_latest_release()
@@ -180,42 +177,6 @@ class GitHubUpdater
         }
 
         return $release;
-    }
-
-    private function get_latest_version_tag()
-    {
-        $tags = $this->request_github_json($this->github_tags_api_url());
-        if (!is_array($tags)) {
-            return false;
-        }
-
-        $latest = false;
-        foreach ($tags as $tag) {
-            if (empty($tag['name']) || empty($tag['zipball_url']) || !$this->is_version_tag($tag['name'])) {
-                continue;
-            }
-
-            $candidate = array(
-                'tag_name' => $tag['name'],
-                'zipball_url' => $tag['zipball_url'],
-                'html_url' => $this->github_tag_url($tag['name']),
-                'published_at' => '',
-                'body' => '',
-            );
-
-            if (
-                !$latest
-                || version_compare(
-                    $this->normalize_version($candidate['tag_name']),
-                    $this->normalize_version($latest['tag_name']),
-                    '>'
-                )
-            ) {
-                $latest = $candidate;
-            }
-        }
-
-        return $latest;
     }
 
     private function request_github_json($url)
@@ -262,24 +223,10 @@ class GitHubUpdater
         return ltrim(trim($version), 'vV');
     }
 
-    private function is_version_tag($tag_name)
-    {
-        return (bool) preg_match('/^[vV]?\d+(?:\.\d+){0,3}(?:[-+][0-9A-Za-z.-]+)?$/', $tag_name);
-    }
-
     private function github_release_api_url()
     {
         return sprintf(
             'https://api.github.com/repos/%s/%s/releases/latest',
-            rawurlencode(self::GITHUB_OWNER),
-            rawurlencode(self::GITHUB_REPO)
-        );
-    }
-
-    private function github_tags_api_url()
-    {
-        return sprintf(
-            'https://api.github.com/repos/%s/%s/tags?per_page=100',
             rawurlencode(self::GITHUB_OWNER),
             rawurlencode(self::GITHUB_REPO)
         );
@@ -291,15 +238,6 @@ class GitHubUpdater
             'https://github.com/%s/%s',
             rawurlencode(self::GITHUB_OWNER),
             rawurlencode(self::GITHUB_REPO)
-        );
-    }
-
-    private function github_tag_url($tag_name)
-    {
-        return sprintf(
-            '%s/tree/%s',
-            $this->github_repo_url(),
-            rawurlencode($tag_name)
         );
     }
 }
