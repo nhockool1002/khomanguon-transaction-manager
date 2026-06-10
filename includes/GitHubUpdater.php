@@ -36,7 +36,7 @@ class GitHubUpdater
             return $update;
         }
 
-        $release = $this->get_latest_package();
+        $release = $this->get_latest_package(true);
         if (!$release) {
             return false;
         }
@@ -65,7 +65,7 @@ class GitHubUpdater
             $transient->no_update = array();
         }
 
-        $release = $this->get_latest_package();
+        $release = $this->get_latest_package(true);
         if (!$release) {
             return $transient;
         }
@@ -91,7 +91,7 @@ class GitHubUpdater
             return $result;
         }
 
-        $release = $this->get_latest_package();
+        $release = $this->get_latest_package(true);
         if (!$release) {
             return $result;
         }
@@ -146,19 +146,19 @@ class GitHubUpdater
         return $source;
     }
 
-    private function get_latest_package()
+    private function get_latest_package($force_refresh = false)
     {
         $cached = get_site_transient(self::CACHE_KEY);
-        if (is_array($cached)) {
+        if (!$force_refresh && is_array($cached)) {
             return $cached;
         }
 
         $release = $this->get_latest_release();
         if (!$release) {
-            return false;
+            return is_array($cached) ? $cached : false;
         }
 
-        set_site_transient(self::CACHE_KEY, $release, 6 * HOUR_IN_SECONDS);
+        set_site_transient(self::CACHE_KEY, $release, 5 * MINUTE_IN_SECONDS);
 
         return $release;
     }
