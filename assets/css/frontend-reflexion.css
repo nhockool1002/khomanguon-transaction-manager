@@ -1,0 +1,33 @@
+body.single-post {
+    --khomanguon-reflexion-gap: -5px;
+    --khomanguon-reflexion-space: clamp(34px, 7vw, 88px);
+    --khomanguon-reflexion-mask: linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 68%);
+}
+
+body.single-post .entry-content img:not(.avatar):not(.emoji):not(.wp-smiley),
+body.single-post .post-content img:not(.avatar):not(.emoji):not(.wp-smiley),
+body.single-post .wp-block-post-content img:not(.avatar):not(.emoji):not(.wp-smiley),
+body.single-post article .wp-post-image,
+body.single-post .post-thumbnail img,
+body.single-post .featured-image img,
+body.single-post .entry-thumbnail img,
+body.single-post .single-featured-image-header img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: var(--khomanguon-reflexion-space);
+    -webkit-box-reflect: below var(--khomanguon-reflexion-gap) var(--khomanguon-reflexion-mask);
+}
+
+body.single-post .entry-content a:has(> img:not(.avatar):not(.emoji):not(.wp-smiley)),
+body.single-post .post-content a:has(> img:not(.avatar):not(.emoji):not(.wp-smiley)),
+body.single-post .wp-block-post-content a:has(> img:not(.avatar):not(.emoji):not(.wp-smiley)) {
+    display: inline-block;
+    max-width: 100%;
+}
+
+@media (max-width: 575px) {
+    body.single-post {
+        --khomanguon-reflexion-space: 36px;
+    }
+}

@@ -137,6 +137,13 @@ class Plugin
             KHOMANGUON_TRANSACTION_MANAGER_VERSION
         );
 
+        wp_enqueue_style(
+            'khomanguon-frontend-reflexion',
+            KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/css/frontend-reflexion.css',
+            array(),
+            KHOMANGUON_TRANSACTION_MANAGER_VERSION
+        );
+
         wp_enqueue_script(
             'khomanguon-frontend-download',
             KHOMANGUON_TRANSACTION_MANAGER_URL . 'assets/js/frontend-download.js',
